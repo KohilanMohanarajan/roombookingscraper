@@ -85,12 +85,31 @@ for i in mydivs:
         # Create a dictionary to store booking information for the room
         shed = {}
         # Create an entry in the schedule dictionary for each day of the week
-        for i in range(0,7):
-            shed[i] = {}
+        for j in range(0,7):
+            shed[j] = {}
+            for k in times:
+                shed[j][k] = True
+        
+        #print(shed[0])
 
         # Get Table, table body element from the div
         table = i.find("table")
         body = table.find("tbody")
+
+        # Get all the headers from the table
+        entries = body.findAll("tr")
+
+        for entry in entries:
+            comps = entry.findAll("td")
+            ent = comps[0]
+            comps.pop(0)
+            #print(entry)
+            for l in range (0, len(comps)):
+                booked = comps[l].get("class")
+                length = comps[l].get("rowspan")
+                #shed[l][ent]
+                #print(booked)
+                #print(length)
 
         # 26 TODO: format booking info to put into dictionary
         
