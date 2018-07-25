@@ -49,19 +49,23 @@ for ent in range(0, len(entries)):
             if (trye is False):
                 new_tag = soup.new_tag("td")
                 comps.insert(ie, new_tag)
+    #print(comps)
     for l in range (0, len(comps)):
         booking = comps[l].get("class")
         if (booking != None):
             booked = booking[0]
             length = comps[l].get("rowspan")
+            print(booked, length)
             shed[l][time] = False
             for h in range(0, int(length)):
-                shed[l][times[h]] = False
+                start = times.index(time)
+                shed[l][times[start + h]] = False
 
-# for ir in range(0, 7):
-#     for it in range(0, len(shed[0])):
-#         print(shed[ir][times[it]])
-#     print("--------------------------------")
+for ir in range(0, 7):
+    print("------" + str(ir) + "------")
+    for it in range(0, len(shed[0])):
+        print(shed[ir][times[it]])
+    print("--------------------------------")
 
 # Open json file to store data for writing
 open('rooms.json', 'w').close()
