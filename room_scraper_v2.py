@@ -19,6 +19,7 @@ weekday = date.weekday()
 response = requests.get("https://intranet.utsc.utoronto.ca/intranet2/RegistrarService?&room=AA-112%2CAA-204&day=2018-06-25")
 #print(response.content)
 
+data = {}
 table = json.loads(response.text)
 tableRaw = table["AA-112"]
 
@@ -61,12 +62,16 @@ for ent in range(0, len(entries)):
                 start = times.index(time)
                 shed[l][times[start + h]] = False
 
-for ir in range(0, 7):
-    print("------" + str(ir) + "------")
-    for it in range(0, len(shed[0])):
-        print(shed[ir][times[it]])
-    print("--------------------------------")
+data["AA-112"] = shed
+
+# for ir in range(0, 7):
+#     print("------" + str(ir) + "------")
+#     for it in range(0, len(shed[0])):
+#         print(shed[ir][times[it]])
+#     print("--------------------------------")
 
 # Open json file to store data for writing
 open('rooms.json', 'w').close()
 outfile = open('rooms.json', 'w')
+
+json.dump(data, outfile)
