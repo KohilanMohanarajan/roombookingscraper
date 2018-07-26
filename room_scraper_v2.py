@@ -10,7 +10,8 @@ times = ["08:00","08:30","09:00","09:30",
             "14:00","14:30","15:00","15:30",
             "16:00","16:30","17:00","17:30",
             "18:00","18:30","19:00","19:30",
-            "20:00","20:30","21:00","21:30"]
+            "20:00","20:30","21:00","21:30",
+            "22:00","22:30","23:00","23:30"]
 
 rooms = ["AA-112","AA-204","AA-205","AA-206",
             "AA-207","AA-208","AA-209","AC-223",
@@ -30,9 +31,19 @@ rooms = ["AA-112","AA-204","AA-205","AA-206",
 date = datetime.datetime.now()
 day = date.day
 month = date.month
-year = date.year
-hour = date.hour
-weekday = date.weekday()
+year = str(date.year)
+hour = (date.hour)
+weekday = (date.weekday())
+
+# Format day and month to fit into url
+if (day < 10):
+    day = "0" + str(day)
+
+if (month < 10):
+    month = "0" + str(month)
+
+day = str(day)
+month = str(month)
 
 # Initiate dictionary to store all our data
 data = {}
@@ -40,7 +51,7 @@ data = {}
 # Iterate through all rooms to retrieve the data as follows
 for room in rooms:
     # Retrieve XML from Registrar booking website as JSON
-    response = requests.get("https://intranet.utsc.utoronto.ca/intranet2/RegistrarService?&room=" + room + "%2CAA-204&day=2018-06-25")
+    response = requests.get("https://intranet.utsc.utoronto.ca/intranet2/RegistrarService?&room=" + room + "%2CAA-204&day=" + year + "-" + month + "-" + day)
 
     # Parse the JSON to retrieve raw XML
     table = json.loads(response.text)
