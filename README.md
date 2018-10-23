@@ -8,3 +8,10 @@ The purpose of this project is purely educational, and is not made with any mali
 The Python libraries Beautifulsoup and Selenium, along with the Selenium Chrome Web Driver, were used to make these scripts.
 
 NOTE: Selenium was only used in Version 1, and use of it was discontinued in Version 2.
+
+## TODO
+- Scrape more days of the week/month
+- Give room availabilities for a given building
+- Give available rooms for a spanning period of time
+- UI overhaul
+- Filters for rooms, times, buildings
