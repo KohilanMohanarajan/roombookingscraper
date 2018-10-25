@@ -15,3 +15,4 @@ NOTE: Selenium was only used in Version 1, and use of it was discontinued in Ver
 - Give available rooms for a spanning period of time
 - UI overhaul
 - Filters for rooms, times, buildings
+- Add info regarding who booked a course
