@@ -52,7 +52,7 @@ data = {}
 # Iterate through all rooms to retrieve the data as follows
 for room in rooms:
     # Retrieve XML from Registrar booking website as JSON
-    response = requests.get("https://intranet.utsc.utoronto.ca/intranet2/RegistrarService?&room=" + room + "%2CAA-204&day=" + year + "-" + month + "-" + day)
+    response = requests.get("https://intranet.utsc.utoronto.ca/intranet2/RegistrarService?&room=" + room + "&day=" + year + "-" + month + "-" + day)
 
     # Parse the JSON to retrieve raw XML
     table = json.loads(response.text)
