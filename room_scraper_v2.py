@@ -28,6 +28,8 @@ rooms = ["AA-112","AA-204","AA-205","AA-206",
             "PO-101","SW-128","SW-143","SW-309",
             "SW-319","SY-110"]
 
+link = "https://intranet.utsc.utoronto.ca/intranet2/RegistrarService?&room="
+
 # Get current Date and Time
 date = datetime.datetime.now()
 day = date.day
@@ -46,29 +48,7 @@ if (month < 10):
 day = str(day)
 month = str(month)
 
-# Initiate dictionary to store all our data
-data = {}
-
-# Iterate through all rooms to retrieve the data as follows
-for room in rooms:
-    # Retrieve XML from Registrar booking website as JSON
-    response = requests.get("https://intranet.utsc.utoronto.ca/intranet2/RegistrarService?&room=" + room + "&day=" + year + "-" + month + "-" + day)
-
-    # Parse the JSON to retrieve raw XML
-    table = json.loads(response.text)
-    tableRaw = table[room]
-
-    # Create an instance of BeautifulSoup parser
-    soup = BeautifulSoup(tableRaw, 'html.parser')
-
-    # Get table, and table body element
-    table = soup.find("table")
-    body = table.find("tbody")
-
-    # Get all the rows from the table
-    entries = body.findAll("tr")
-
-    # Create a dictionary to store booking information for the room
+def create_dict(): 
     shed = {}
     # Create an entry in the schedule dictionary for each day of the week
     for j in range(0,7):
@@ -77,6 +57,10 @@ for room in rooms:
             # By default the room is free (True = Free, False = Booked)
             shed[j][k] = True
 
+    return shed
+
+def enter_data(entries):
+    shed = create_dict()
     # Iterate through each row of the table
     for ent in range(0, len(entries)):
         # Comps contains all the td elements (td elements contain column info)
@@ -112,16 +96,43 @@ for room in rooms:
                 for h in range(0, int(length)):
                     start = times.index(time)
                     shed[l][times[start + h]] = False
+    return shed 
 
-    # Add all the booking data into the entry for the current room
-    data[room] = shed
+def write_to_file(data, file_name):
+    # Open json file to store data for writing
+    open(file_name, 'w').close()
+    outfile = open(file_name, 'w')
 
-# Open json file to store data for writing
-open('rooms.json', 'w').close()
-outfile = open('rooms.json', 'w')
+    # Dump dictionary into JSON file
+    json.dump(data, outfile)
 
-# Dump dictionary into JSON file
-json.dump(data, outfile)
+    # Close json file
+    outfile.close()
 
-# Close json file
-outfile.close()
+if __name__ == '__main__':
+    data = {}
+
+    # Iterate through all rooms to retrieve the data as follows
+    for room in rooms:
+        # Retrieve XML from Registrar booking website as JSON
+        response = requests.get(link + room + "&day=" + year + "-" + month + "-" + day)
+
+        # Parse the JSON to retrieve raw XML
+        table = json.loads(response.text)
+        tableRaw = table[room]
+
+        # Create an instance of BeautifulSoup parser
+        soup = BeautifulSoup(tableRaw, 'html.parser')
+
+        # Get table, and table body element
+        table = soup.find("table")
+        body = table.find("tbody")
+
+        # Get all the rows from the table
+        entries = body.findAll("tr")
+
+        # Add all the booking data into the entry for the current room
+        data[room] = enter_data(entries)
+
+    write_to_file(data, "rooms.json")
+    
