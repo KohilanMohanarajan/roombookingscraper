@@ -28,11 +28,47 @@
   ]
 
   $(document).ready(function () {
+    var dateObj = new Date();
+    //dateObj.setHours(9);
+    var today = dateObj.getDay();
+    var now = "";
+    if (dateObj.getHours() < 10) {
+      now = "0" + dateObj.getHours() + ":00";
+    } else {
+      now = dateObj.getHours() + ":00";
+    }
+
+    var timelist = times.slice(times.indexOf(now), times.length);
+
+    var time = document.getElementById("time");
+    var option = document.createElement("option");
+    option.setAttribute("selected", "")
+    option.text = timelist[0] + " (now)"
+    time.appendChild(option);
+
+    for (var timeend = 1; timeend < timelist.length-1; timeend++) {
+      var option = document.createElement("option");
+      option.text = timelist[timeend];
+      time.appendChild(option);
+    }
+
+    var endtime = document.getElementById("endtime");
+
+    for (var timeend = 1; timeend < timelist.length-1; timeend++) {
+      var option = document.createElement("option");
+      option.text = timelist[timeend];
+      endtime.appendChild(option);
+    }
+
+    var option = document.createElement("option");
+    option.setAttribute("selected", "")
+    option.text = timelist[timelist.length-1]
+    endtime.appendChild(option);
+
     var bldg = document.getElementById("bldg");
     var option = document.createElement("option");
-    option.setAttribute("disabled", "")
     option.setAttribute("selected", "")
-    option.text = "Select a building..."
+    option.text = "All"
     bldg.appendChild(option);
 
     for (var bldgs in buildings) {
@@ -41,26 +77,11 @@
       bldg.appendChild(option);
     }
 
-    var time = document.getElementById("time");
-    var option = document.createElement("option");
-    option.setAttribute("disabled", "")
-    option.setAttribute("selected", "")
-    option.text = "Select a start time..."
-    time.appendChild(option);
-
-    for (var timeq in times) {
-      var option = document.createElement("option");
-      option.text = times[timeq];
-      time.appendChild(option);
-    }
-
+    showData();
 
     $("#bldg").change(function () {
-      document.getElementById("dispTable").style = "display:none"
-
       var bldg = document.getElementById("bldg");
       var bldgSel = bldg.options[bldg.selectedIndex].value;
-      console.log(bldgSel);
 
       var roomList = BuildRooms[bldgSel];
 
@@ -71,110 +92,111 @@
       var option = document.createElement("option");
       option.setAttribute("disabled", "")
       option.setAttribute("selected", "")
-      option.text = "Select a building..."
+      option.text = "Filter by room..."
       roomSel.appendChild(option);
 
       for (var room in roomList) {
-        console.log(roomList[room])
+        //console.log(roomList[room])
         var option = document.createElement("option");
         option.text = roomList[room];
         roomSel.appendChild(option);
       }
-      document.getElementById("room").style = ""
-    });
 
-    $("#room").change(function () {
-      var room = document.getElementById("room");
-      var roomSel = room.options[room.selectedIndex].value;
-      console.log(roomSel);
+      if (bldgSel != "All") {
+        document.getElementById("room").style = "";
+      } else {
+        document.getElementById("room").style = "display:none";
+      }
+      
 
-      var timeTable = document.getElementById("availTimes");
-      timeTable.innerHTML = "";
-
-      $.getJSON("rooms.json", function (data) {
-        var roomData = data[roomSel];
-
-        var dateObj = new Date();
-        var today = dateObj.getDay();
-        var hour = dateObj.getHours();
-        var currHour = hour + ":00";
-        var start = times.indexOf(currHour);
-        var upcoming = times.slice(start, -1);
-
-        var todayData = roomData[today];
-        for (var index in upcoming) {
-          var time = upcoming[index];
-          var avail = todayData[upcoming[index]];
-          console.log(avail);
-          var availability = "<strong>Free</strong>";
-          if (avail == false) {
-            availability = "Booked";
-          }
-          var tr = document.createElement("tr");
-
-          var td1 = document.createElement("td");
-          td1.innerHTML = time;
-          tr.appendChild(td1);
-
-          var td2 = document.createElement("td");
-          td2.innerHTML = availability;
-          tr.appendChild(td2);
-
-          timeTable.appendChild(tr)
-        }
-        //console.log(today, , upcoming)
-      });
-      document.getElementById("dispTable").style = ""
+      showData();
     });
 
     $("#time").change(function () {
-      document.getElementById("roomTable").style = "display:none"
-
       var time = document.getElementById("time");
-      var timeSel = time.options[time.selectedIndex].value;
-      console.log(timeSel);
 
-      var endTime = document.getElementById("endtime");
-
-      endTime.innerHTML = "";
-
-      var option = document.createElement("option");
-      option.setAttribute("disabled", "")
-      option.setAttribute("selected", "")
-      option.text = "Select a finish time..."
-      endTime.appendChild(option);
-
-      starter = times.indexOf(timeSel)+1
-      for (var timeend = starter; timeend < times.length; timeend++) {
-        //console.log(times[timeend])
-        var option = document.createElement("option");
-        option.text = times[timeend];
-        endTime.appendChild(option);
+      var timeSel = "";
+      if (time.selectedIndex != 0) {
+        timeSel = time.options[time.selectedIndex].value;
+      } else {
+        timeRaw = time.options[time.selectedIndex].value;
+        rawList = timeRaw.split(" ");
+        timeSel = rawList[0];
       }
-      document.getElementById("endtime").style = ""
+
+      var timelist = times.slice(times.indexOf(timeSel), times.length);
+
+      var endtime = document.getElementById("endtime");
+
+      endtime.innerHTML = "";
+
+      if (timelist.length > 2) {
+        for (var timeend = 1; timeend < timelist.length; timeend++) {
+          var option = document.createElement("option");
+          option.text = timelist[timeend];
+          endtime.appendChild(option);
+        }
+      }
+      else {
+        var option = document.createElement("option");
+        option.text = timelist[timelist.length-1];
+        endtime.appendChild(option);
+      }
+      
+      showData();
     });
 
     $("#endtime").change(function () {
-      var time = document.getElementById("time");
-      var timeSel = time.options[time.selectedIndex].value;
+      showData();
+    });
 
+    $("#room").change(function () {
+      showData();
+    });
+
+    function showData() {
+      var time = document.getElementById("time");
+      var timeSel = "";
+      if (time.selectedIndex != 0) {
+        timeSel = time.options[time.selectedIndex].value;
+      } else {
+        timeRaw = time.options[time.selectedIndex].value;
+        rawList = timeRaw.split(" ");
+        timeSel = rawList[0];
+      }
+      
       var endtime = document.getElementById("endtime");
       var endtimeSel = endtime.options[endtime.selectedIndex].value;
+
+      var bldg = document.getElementById("bldg");
+      var bldgSel = bldg.options[bldg.selectedIndex].value;
 
       var roomTable = document.getElementById("availRooms");
       roomTable.innerHTML = "";
 
       var timelist = times.slice(times.indexOf(timeSel),times.indexOf(endtimeSel)+1);
 
-      $.getJSON("rooms.json", function (data) {
-        var dateObj = new Date();
-        var today = dateObj.getDay();
-        var starthour = timeSel
-        var endHour = endtimeSel;
+      console.log(timeSel, endtimeSel, bldgSel, timelist);
 
-        for (var index in data) {
-          var roomData = data[index];
-          var todayData = roomData[today]
+      $.getJSON("rooms.json", function (data) {
+        var starthour = timeSel;
+        var endHour = endtimeSel;
+        var roomList = Object.keys(data);
+
+        if (bldgSel != "All") {
+          roomList = BuildRooms[bldgSel]
+
+          var room = document.getElementById("room");
+          var roomSel = room.options[room.selectedIndex].value;
+          if (roomSel != "Filter by room..."){
+            roomList = [roomSel];
+          }
+        }
+        //console.log(roomList);
+
+        for (var index in roomList) {
+          var roomData = data[roomList[index]];
+          var todayData = roomData[today];
           //console.log(todayData)
 
           var finavail = true;
@@ -193,7 +215,7 @@
           var tr = document.createElement("tr");
 
           var td1 = document.createElement("td");
-          td1.innerHTML = index;
+          td1.innerHTML = roomList[index];
           tr.appendChild(td1);
 
           var td2 = document.createElement("td");
@@ -204,28 +226,6 @@
         }
       });
       document.getElementById("roomTable").style = "";
-    });
-
-    $("#timeRoom").click(function(){
-      document.getElementById("time").style = 'display:none';
-      document.getElementById("endtime").style = 'display:none';
-      document.getElementById("room").style = 'display:none';
-      document.getElementById("bldg").style = '';
-      document.getElementById("bldg").selectedIndex = 0;
-
-      document.getElementById("roomTable").style = "display:none";
-      document.getElementById("dispTable").style = "display:none";
-    });
-
-    $("#roomTime").click(function(){
-      document.getElementById("bldg").style = 'display:none';
-      document.getElementById("endtime").style = 'display:none';
-      document.getElementById("room").style = 'display:none';
-      document.getElementById("time").style = '';
-      document.getElementById("time").selectedIndex = 0;
-
-      document.getElementById("roomTable").style = "display:none";
-      document.getElementById("dispTable").style = "display:none";
-    });
+    }
 
   });

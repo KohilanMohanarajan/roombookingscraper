@@ -48,64 +48,28 @@
 
   <link rel="icon" href="img/profile.png" type="image/png" />
   <!--    <link rel="shortcut icon" href="logo2.png" type="image/png" />-->
-  <style>
-    #timeRoom {
-      margin-top:20px;
-      margin-bottom:10px;
-
-      width: 170px;
-    }
-
-    #roomTime {
-      margin-top:10px;
-      margin-bottom:20px;
-
-      width: 170px;
-    }
-
-  </style>
 </head>
 
 <body>
   <div class="col-md-12" align="center">
-    <button class="btn" id="timeRoom">Find times for a Room</button> <br>
-    <button class="btn" id="roomTime">Find rooms for a Time</button>
-  </div>
-  <div class="col-md-12" align="center">
+    Time:
     <div class="form-group">
-      <select class="form-control" id="bldg" style="display:none">
+      <select class="form-control" id="time">
 
       </select>
-    </div>
-
-    <div class="form-group">
-      <select class="form-control" id="room" style="display:none">
+      to
+      <select class="form-control" id="endtime">
         
       </select>
     </div>
-
-    <div class="col-md-12" align="center" id="dispTable" style="display:none">
-      <table id="timetable" class="table table-striped">
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>Availability</th>
-          </tr>
-        </thead>
-        <tbody id="availTimes">
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="col-md-12" align="center">
+    Building:
     <div class="form-group">
-      <select class="form-control" id="time" style="display:none">
+      <select class="form-control" id="bldg">
 
       </select>
     </div>
-
     <div class="form-group">
-      <select class="form-control" id="endtime" style="display:none">
+      <select class="form-control" id="room" style="display:none">
         
       </select>
     </div>
