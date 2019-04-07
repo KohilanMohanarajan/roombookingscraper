@@ -17,7 +17,7 @@ rooms = ["AA-112","AA-204","AA-205","AA-206",
             "AA-207","AA-208","AA-209","AC-223",
             "AC-332","AC-334","BV-260","BV-264",
             "BV-355","BV-359","BV-361","BV-363",
-            "HL-001","HL-006","HL-008","HL-010",
+            "HL-B101","HL-B106","HL-B108","HL-B110",
             "HW-214","HW-215","HW-216","HW-308",
             "HW-402","HW-408","IC-120","IC-130",
             "IC-200","IC-204","IC-208","IC-212",
@@ -51,8 +51,9 @@ data = {}
 
 # Iterate through all rooms to retrieve the data as follows
 for room in rooms:
+    print("Retrieving data for " + room + "...")
     # Retrieve XML from Registrar booking website as JSON
-    response = requests.get("https://intranet.utsc.utoronto.ca/intranet2/RegistrarService?&room=" + room + "&day=" + year + "-" + month + "-" + day)
+    response = requests.get("https://intranet.utsc.utoronto.ca/intranet2/RegistrarService?&room=" + room + "%2CAA-204&day=" + year + "-" + month + "-" + day)
 
     # Parse the JSON to retrieve raw XML
     table = json.loads(response.text)
@@ -104,13 +105,14 @@ for room in rooms:
             if (booking != None):
                 # For debugging purposes, returns class element
                 #booked = booking[0]
-
+                #print(comps[l].getText())
                 # Determine how long the room is booked for
                 length = comps[l].get("rowspan")
-
+                
                 # Set the booking status for current entry, as well as all subsequent entries for column to booked
                 for h in range(0, int(length)):
-                    start = times.index(time)
+                    start = ent
+                    #print(room, l, h, start, times[start+h])
                     shed[l][times[start + h]] = False
 
     # Add all the booking data into the entry for the current room
